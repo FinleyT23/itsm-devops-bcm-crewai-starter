@@ -1,4 +1,4 @@
-from crewai_tools import BaseTool
+from crewai.tools import BaseTool
 from pydantic import BaseModel
 
 class ServiceCatalogTool(BaseTool):
@@ -25,7 +25,15 @@ class NotificationTool(BaseTool):
     def _run(self, message: str, audience: str):
         return f"📨 Message sent to {audience}: {message[:80]}..."
 
+class LogLessonTool(BaseTool):
+    name: str = "log_lesson"
+    description: str = "Logs a lesson learned for continual improvement"
+    def _run(self, lesson: str):
+        return f"📝 Lesson logged for post-incident review: {lesson}"
+
+
 get_service_catalog = ServiceCatalogTool()
 calculate_impact = ImpactTool()
 failover_service = FailoverTool()
 send_notification = NotificationTool()
+log_lesson = LogLessonTool()

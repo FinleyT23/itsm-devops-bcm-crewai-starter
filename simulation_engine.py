@@ -1,6 +1,7 @@
 class SimulationEngine:
     def evaluate(self, final_plan: str, scenario: str) -> dict:
-        plan_lower = final_plan.lower()
+        plan_lower = str(final_plan).lower()
+
         
         # KPI logic
         rto_met = any(x in plan_lower for x in ["within 4 hours", "under 240 minutes", "rto met", "recovery time < 4h"])

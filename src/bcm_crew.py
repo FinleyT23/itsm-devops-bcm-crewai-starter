@@ -8,7 +8,7 @@ def create_bcm_crew():
         agents=agents,
         tasks=[task1, task2, task3, task4],
         process=Process.sequential,
-        verbose=2,
-        memory=True,
+        verbose=True,
+        memory=False,
         cache=True
     )
