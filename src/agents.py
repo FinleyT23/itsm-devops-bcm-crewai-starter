@@ -3,7 +3,8 @@ from src.tools import analyze_security_event, create_incident_record, get_servic
 
 ollama_llm = LLM(
     model="ollama/qwen3:8b-q4_K_M",
-    base_url="http://localhost:11434"
+    base_url="http://localhost:11434",
+    timeout=1200
 )
 
 
@@ -27,30 +28,61 @@ def create_agents():
     )
 
     impact_agent = Agent(
-        role="Holistic Risk Analyst",
-        goal="Calculate exact RTO/RPO impact, prioritize services, and align to business value (ITIL Guiding Principle: Focus on Value)",
-        backstory="You translate outages into regulatory, customer, and financial risk using the full Service Value System.",
+        role="Business Impact Analyst",
+        goal=(
+            "You have exactly 1 tool: calculate_impact. "
+            "Use ONLY this tool. Do NOT invent or call any other tool. "
+            "Call calculate_impact once per affected service, passing ONLY the service name as a string."
+        ),
+        backstory=(
+            "You assess business impact at FinServe. Your workflow: "
+            "Call calculate_impact(service='Mobile Banking'), then "
+            "call calculate_impact(service='Fraud Detection'), then "
+            "call calculate_impact(service='Online Transfers'). "
+            "Then write your Final Answer with a prioritized recovery list. "
+            "You never call any tool that is not in your tool list."
+        ),
         tools=[calculate_impact],
         llm=ollama_llm,
-        verbose=True
+        verbose=True,
+        allow_delegation=False
     )
 
     recovery_agent = Agent(
-        role="DevOps Recovery Engineer",
-        goal="Orchestrate automated recovery using DevOps Three Ways (Flow, Feedback, Continual Learning) and CALMS automation",
-        backstory="You live by the Three Ways. You optimize flow with automation, close feedback loops instantly, and capture lessons for improvement.",
+        role="Recovery Engineer",
+        goal=(
+            "You have exactly 2 tools: failover_service and log_lesson. "
+            "Use ONLY these 2 tools. Do NOT invent or call any other tool."
+        ),
+        backstory=(
+            "You execute disaster recovery at FinServe. Your workflow: "
+            "Call failover_service for each affected service, then "
+            "call log_lesson to record what happened. "
+            "Then write your Final Answer with the recovery plan. "
+            "You never call any tool that is not in your tool list."
+        ),
         tools=[failover_service, log_lesson],
         llm=ollama_llm,
-        verbose=True
+        verbose=True,
+        allow_delegation=False
     )
 
     comms_agent = Agent(
-        role="Transparent Communicator",
-        goal="Deliver calm, clear, timely updates to all stakeholders per ITIL 'Collaborate and Promote Visibility'",
-        backstory="You ensure every message builds trust and meets regulatory requirements.",
+        role="Stakeholder Communicator",
+        goal=(
+            "You have exactly 1 tool: send_notification. "
+            "Use ONLY this tool. Do NOT invent or call any other tool."
+        ),
+        backstory=(
+            "You send stakeholder communications at FinServe. Your workflow: "
+            "Call send_notification for each audience (customers, executives, regulators). "
+            "Then write your Final Answer with all messages sent. "
+            "You never call any tool that is not in your tool list."
+        ),
         tools=[send_notification],
         llm=ollama_llm,
-        verbose=True
+        verbose=True,
+        allow_delegation=False
     )
 
     return [detection_agent, impact_agent, recovery_agent, comms_agent]

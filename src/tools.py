@@ -47,9 +47,14 @@ class ServiceCatalogTool(BaseTool):
 
 class ImpactTool(BaseTool):
     name: str = "calculate_impact"
-    description: str = "Calculates customer & financial impact"
-    def _run(self, service: str):
-        return f"{service} impacts 1.2M customers and $2.4M/hour revenue loss"
+    description: str = "Calculates customer and financial impact for a service. Pass ONLY the service name as a string. Example: calculate_impact(service='Mobile Banking')"
+    def _run(self, service: str, **kwargs):
+        impacts = {
+            "mobile banking": "Mobile Banking impacts 1.2M customers, $2.4M/hour revenue loss, RTO: 4h, RPO: 15m, Regulatory Risk: HIGH",
+            "fraud detection": "Fraud Detection impacts 800K transactions/hour, $1.8M/hour revenue loss, RTO: 2h, RPO: 5m, Regulatory Risk: CRITICAL",
+            "online transfers": "Online Transfers impacts 500K customers, $1.1M/hour revenue loss, RTO: 4h, RPO: 15m, Regulatory Risk: HIGH",
+        }
+        return impacts.get(service.lower(), f"{service} impacts 1.2M customers and $2.4M/hour revenue loss, Regulatory Risk: MEDIUM")
 
 class FailoverTool(BaseTool):
     name: str = "failover_service"

@@ -19,20 +19,48 @@ task1 = Task(
 )
 
 task2 = Task(
-    description="Perform full business impact assessment. Map every affected service to RTO/RPO, customer count, revenue loss, and regulatory risk. Prioritize recovery order.",
+    description=(
+        "Assess business impact for each affected service.\n\n"
+        "Complete these steps using ONLY your provided tool:\n"
+        "Step 1: Call calculate_impact(service='Mobile Banking')\n"
+        "Step 2: Call calculate_impact(service='Fraud Detection')\n"
+        "Step 3: Call calculate_impact(service='Online Transfers')\n\n"
+        "After all 3 calls, write your Final Answer with a prioritized recovery list.\n"
+        "IMPORTANT: You have ONLY 1 tool: calculate_impact. It takes ONLY a service name string. "
+        "Do NOT call any other tool. Do NOT pass extra parameters."
+    ),
     agent=agents[1],
-    expected_output="Prioritized recovery list with exact impact numbers and business justification"
+    expected_output="Prioritized recovery list with impact numbers per service"
 )
 
 task3 = Task(
-    description="Build and execute the automated recovery plan using DevOps automation. Include failover steps, feedback loops, and estimated timestamps that meet the 4-hour RTO.",
+    description=(
+        "Execute the recovery plan for affected services.\n\n"
+        "Complete these steps using ONLY your provided tools:\n"
+        "Step 1: Call failover_service(service='Mobile Banking')\n"
+        "Step 2: Call failover_service(service='Fraud Detection')\n"
+        "Step 3: Call failover_service(service='Online Transfers')\n"
+        "Step 4: Call log_lesson with a summary of the recovery actions taken.\n\n"
+        "After all steps, write your Final Answer with the recovery results.\n"
+        "IMPORTANT: You have ONLY 2 tools: failover_service and log_lesson. "
+        "Do NOT call any other tool."
+    ),
     agent=agents[2],
-    expected_output="Step-by-step numbered recovery plan with automation commands and verification steps"
+    expected_output="Recovery results for each service with timestamps"
 )
 
 task4 = Task(
-    description="Generate and send all stakeholder communications (customers, executives, regulators). Keep messages calm, transparent, and actionable.",
+    description=(
+        "Send stakeholder notifications about the incident and recovery.\n\n"
+        "Complete these steps using ONLY your provided tool:\n"
+        "Step 1: Call send_notification(message='...', audience='customers')\n"
+        "Step 2: Call send_notification(message='...', audience='executives')\n"
+        "Step 3: Call send_notification(message='...', audience='regulators')\n\n"
+        "After all 3 calls, write your Final Answer with all messages sent.\n"
+        "IMPORTANT: You have ONLY 1 tool: send_notification. It takes message and audience. "
+        "Do NOT call any other tool."
+    ),
     agent=agents[3],
-    expected_output="Full set of ready-to-send messages with timestamps",
+    expected_output="All notification messages sent with audiences listed",
     context=[task1, task2, task3]
 )
