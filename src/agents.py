@@ -1,6 +1,6 @@
 import os
 from crewai import Agent, LLM
-from src.tools import analyze_security_event, get_service_catalog, calculate_impact, failover_service, send_notification, log_lesson
+from src.tools import analyze_security_event, create_incident_record, get_service_catalog, calculate_impact, failover_service, send_notification, log_lesson
 
 gemini_llm = LLM(
     model="gemini/gemini-2.5-flash",
@@ -11,9 +11,17 @@ gemini_llm = LLM(
 def create_agents():
     detection_agent = Agent(
         role="Incident Classification Specialist",
-        goal="Classify the reported event's severity (minor/major/catastrophic), identify affected services, and create the initial incident record per ITIL Service Continuity Management. Use ONLY the tools provided to you: analyze_security_event and get_service_catalog.",
-        backstory="You are FinServe's incident classification expert. When an event is reported to you, you use your analyze_security_event tool to classify it and your get_service_catalog tool to identify affected services. You NEVER call tools that are not in your tool list.",
-        tools=[analyze_security_event, get_service_catalog],
+        goal=(
+            "You have exactly 3 tools: analyze_security_event, get_service_catalog, create_incident_record. "
+            "Use ONLY these 3 tools. Do NOT invent or call any other tool."
+        ),
+        backstory=(
+            "You classify incidents at FinServe. Your workflow is always the same 3 steps: "
+            "Step 1: call analyze_security_event. Step 2: call get_service_catalog. "
+            "Step 3: call create_incident_record. Then write your final answer. "
+            "You never call any tool that is not in your tool list."
+        ),
+        tools=[analyze_security_event, get_service_catalog, create_incident_record],
         verbose=True,
         llm=gemini_llm,
         allow_delegation=False

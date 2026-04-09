@@ -6,13 +6,16 @@ agents = create_agents()
 task1 = Task(
     description=(
         "The following event has been reported: {event_description}\n\n"
-        "Your job: Use the analyze_security_event tool (pass the event description to it) to classify this event's severity. "
-        "Then use the get_service_catalog tool to identify which services are affected. "
-        "Finally, create an initial incident record with the severity classification, affected services, and recommended actions. "
-        "Do NOT attempt to call any tool other than analyze_security_event and get_service_catalog."
+        "Complete these 3 steps in order using ONLY your provided tools:\n"
+        "Step 1: Call the analyze_security_event tool with the event description above.\n"
+        "Step 2: Call the get_service_catalog tool to list critical services.\n"
+        "Step 3: Call the create_incident_record tool with the severity, event type, and affected services from Steps 1-2.\n\n"
+        "After completing all 3 steps, write your Final Answer summarizing the incident.\n"
+        "IMPORTANT: You have ONLY 3 tools: analyze_security_event, get_service_catalog, create_incident_record. "
+        "Do NOT call any other tool."
     ),
     agent=agents[0],
-    expected_output="Clear severity classification + incident ID + affected services list + immediate invocation of BCM plan"
+    expected_output="Incident ID, severity classification, affected services, and BCM plan activation status"
 )
 
 task2 = Task(

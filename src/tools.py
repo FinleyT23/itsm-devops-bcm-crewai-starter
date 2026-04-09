@@ -25,6 +25,20 @@ class AnalyzeSecurityEventTool(BaseTool):
                 "Recommended: Monitor and escalate if impact grows"
             )
 
+class CreateIncidentRecordTool(BaseTool):
+    name: str = "create_incident_record"
+    description: str = "Creates an incident record. Pass in severity, event_type, and affected_services to generate an incident ID and formal record."
+    def _run(self, severity: str, event_type: str, affected_services: str):
+        import random
+        incident_id = f"INC-{random.randint(10000, 99999)}"
+        return (
+            f"Incident Record Created | ID: {incident_id} | "
+            f"Severity: {severity} | Type: {event_type} | "
+            f"Affected Services: {affected_services} | "
+            f"Status: OPEN | BCM Plan: ACTIVATED | "
+            f"Timestamp: 2026-04-09T08:00:00Z"
+        )
+
 class ServiceCatalogTool(BaseTool):
     name: str = "get_service_catalog"
     description: str = "Returns critical services with RTO/RPO"
@@ -57,6 +71,7 @@ class LogLessonTool(BaseTool):
 
 
 analyze_security_event = AnalyzeSecurityEventTool()
+create_incident_record = CreateIncidentRecordTool()
 get_service_catalog = ServiceCatalogTool()
 calculate_impact = ImpactTool()
 failover_service = FailoverTool()
